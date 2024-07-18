@@ -1,11 +1,11 @@
 from datetime import datetime
 from servicio.mediciones import MedicionesServicio
-from util.constantes import TIPO_MEDICION
+from util.constantes import TIPO_MEDICION,PARTICIPANTE
 
 
 fecha_inicio_dt = datetime(2024, 1, 24)
 fecha_fin_dt = datetime(2024, 1, 26)
-participante = "ACCIONA_G094"
+participante = PARTICIPANTE.ACCIONA_G094.value
 lista_mdidores = ["MNVP1PB0C093020"]
 
 serv = MedicionesServicio()
