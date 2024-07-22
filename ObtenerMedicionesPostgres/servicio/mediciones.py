@@ -49,11 +49,11 @@ class MedicionesServicio:
                     df_combined = pd.concat([df_combined, resultado], ignore_index=True)
         return df_combined
 
-    def obtener_mediciones_todos_medidores(self, participante, tipo_medicion, fecha_inicio_dt, fecha_fin_dt,modalidad:MODALIDAD):
+    def obtener_mediciones_todos_medidores(self, participante, tipo_medicion:TIPO_MEDICION, fecha_inicio_dt, fecha_fin_dt,modalidad:MODALIDAD):
         self.repo.asignar_participante(participante)
         lista_medidores = self.repo.obtener_lista_medidores()
-        return self._obtener_mediciones_para_medidores(tipo_medicion, lista_medidores, fecha_inicio_dt, fecha_fin_dt,modalidad)
+        return self._obtener_mediciones_para_medidores(tipo_medicion.value, lista_medidores, fecha_inicio_dt, fecha_fin_dt,modalidad)
 
-    def obtener_mediciones_por_medidores(self, participante, tipo_medidion, lista_medidores, fecha_inicio_dt, fecha_fin_dt,modalidad:MODALIDAD):        
+    def obtener_mediciones_por_medidores(self, participante, tipo_medidion:TIPO_MEDICION, lista_medidores, fecha_inicio_dt, fecha_fin_dt,modalidad:MODALIDAD):        
         self.repo.asignar_participante(participante)
-        return self._obtener_mediciones_para_medidores(tipo_medidion, lista_medidores, fecha_inicio_dt, fecha_fin_dt,modalidad)
+        return self._obtener_mediciones_para_medidores(tipo_medidion.value, lista_medidores, fecha_inicio_dt, fecha_fin_dt,modalidad)
