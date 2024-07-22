@@ -1,5 +1,9 @@
 from enum import Enum
 
+class MODALIDAD(Enum):
+    HORARIO = "H",
+    MINUTAL = "M"
+
 class TIPO_MEDICION(Enum):
     KWHE = "KWHE"
     KWHR = "KWHR"

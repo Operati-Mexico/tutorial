@@ -44,7 +44,7 @@ class ParticipanteRepositorio():
             with psycopg2.connect(**self.parametros_conexion) as conexion:
                 # Definir la consulta SQL con parámetros
                 consulta_sql = """
-                SELECT clave_de_medicion, clave_de_medidor, fecha AT TIME ZONE zona fecha,fecha_y_hora_de_recepcion,tipo, valor
+                SELECT clave_de_medicion, clave_de_medidor, fecha AT TIME ZONE zona fecha,tipo, valor
                         FROM mediciones
                         WHERE clave_de_medicion = %s
                         AND fecha >= %s
