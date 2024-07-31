@@ -54,7 +54,7 @@ class MedicionesServicio:
         df_combined = pd.DataFrame()
         for medidor in lista_medidores:
             clave_de_medicion = medidor + tipo_medidion
-            if timezone.value == TIMEZONE.CENTROCARGA.value:
+            if timezone.value == TIMEZONE.ESTADO_DE_CUENTA.value:
                 df_combined = self._obtener_medicio_por_timezone_cc(df_combined, medidor,fecha_inicio_dt,fecha_fin_dt,clave_de_medicion, tipo)
             
             if timezone.value == TIMEZONE.CENACE.value:

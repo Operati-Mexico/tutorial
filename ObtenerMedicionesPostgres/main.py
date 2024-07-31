@@ -9,7 +9,7 @@ participante = PARTICIPANTE.ACCIONA_C035
 lista_mdidores = ["PIHPB0C073D90"]
 tipo_medicion = TIPO_MEDICION.KWHE
 modalidad = MODALIDAD.HORARIO
-timezone = TIMEZONE.CENTROCARGA
+timezone = TIMEZONE.ESTADO_DE_CUENTA
 
 serv = MedicionesServicio()
 resultado = serv.obtener_mediciones_por_medidores(participante,tipo_medicion,lista_mdidores,fecha_inicio_dt,fecha_fin_dt,modalidad,timezone)

@@ -2,7 +2,7 @@ from enum import Enum
 
 class TIMEZONE(Enum):
     CENACE = "CENACE",
-    CENTROCARGA = "CENTROCARGA"
+    ESTADO_DE_CUENTA = "ESTADO_DE_CUENTA"
 
 class MODALIDAD(Enum):
     HORARIO = "H",
