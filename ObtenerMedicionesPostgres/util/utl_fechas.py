@@ -1,13 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 
 # Mapeo de nombres de zonas horarias comunes a los identificadores de pytz
 timezone_mapping = {
     'Central Standard Time (Mexico)': 'America/Mexico_City',
-    'US Mountain Standard Time': 'America/Denver',
-    'US Eastern Standard Time': 'America/New_York',
-    'US Pacific Standard Time': 'America/Los_Angeles',
+    'US Mountain Standard Time': 'America/Hermosillo',    
     'America/Matamoros': 'America/Matamoros',
     # Agrega más mapeos según sea necesario
 }
@@ -25,3 +23,19 @@ def convertir_fecha(fecha_dt, timezone_id):
     except pytz.UnknownTimeZoneError:
         print(f"Zona horaria no reconocida: {timezone_id}")
         return None
+
+def obtener_rango_fechas(start_date: datetime, end_date: datetime):
+    """
+    Genera un rango de fechas entre dos fechas dadas.
+
+    :param start_date: Fecha de inicio en tipo datetime.
+    :param end_date: Fecha de finalización en tipo datetime.
+    :return: Lista de fechas en el rango.
+    """
+    date_range = []
+    current_date = start_date
+    while current_date <= end_date:
+        date_range.append(current_date)
+        current_date += timedelta(days=1)
+
+    return date_range

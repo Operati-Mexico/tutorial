@@ -1,5 +1,9 @@
 from enum import Enum
 
+class TIMEZONE(Enum):
+    CENACE = "CENACE",
+    CENTROCARGA = "CENTROCARGA"
+
 class MODALIDAD(Enum):
     HORARIO = "H",
     MINUTAL = "M"

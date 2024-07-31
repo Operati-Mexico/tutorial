@@ -37,6 +37,26 @@ class ParticipanteRepositorio():
         except (Exception, psycopg2.Error) as error:
             print("Error al conectar a la base de datos PostgreSQL:", error)
             return None
+    
+    def obtener_timezone_id_cc(self, clave_de_medidor) -> str :
+        try:
+            # Conectarse a la base de datos
+            with psycopg2.connect(**self.parametros_conexion) as conexion:
+                with conexion.cursor() as cursor:
+                    # Definir la consulta SQL con parámetros
+                    consulta_sql = "SELECT timezone_id_cc FROM public.clavesdemedidor WHERE clave_de_medidor = %s"
+                    # Ejecutar la consulta
+                    cursor.execute(consulta_sql, (clave_de_medidor,))
+                    # Obtener el valor
+                    timezone = cursor.fetchone()
+                    if timezone:
+                        return timezone[0]
+                    else:
+                        print("No se encontraron resultados para la clave_de_medidor proporcionada.")
+                        return None
+        except (Exception, psycopg2.Error) as error:
+            print("Error al conectar a la base de datos PostgreSQL:", error)
+            return None
         
     def obtener_mediciones(self, clave_de_medicion, fecha_inicio, fecha_fin) -> pd.DataFrame:
         try:
@@ -49,7 +69,7 @@ class ParticipanteRepositorio():
                         WHERE clave_de_medicion = %s
                         AND fecha >= %s
                         AND fecha <= %s
-                        ORDER BY id DESC
+                        ORDER BY id ASC
                 """
                 # Cargar datos desde PostgreSQL a un DataFrame de Pandas
                 return pd.read_sql_query(consulta_sql, conexion, params=(clave_de_medicion, fecha_inicio, fecha_fin))                
