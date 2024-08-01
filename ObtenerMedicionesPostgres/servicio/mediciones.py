@@ -1,3 +1,4 @@
+from decimal import Decimal, getcontext
 from util.utl_fechas import convertir_fecha, obtener_rango_fechas
 from datetime import timedelta
 import pandas as pd
@@ -32,6 +33,7 @@ class MedicionesServicio:
     
     def _convertir_minutal_horario_sumada(self,resultado:pd.DataFrame):
         resultado['hora'] = resultado['hora'] + 1
+        resultado['valor'] = resultado['valor'].round(6)
 
         return resultado
     
@@ -42,6 +44,7 @@ class MedicionesServicio:
         resultado = resultado.drop(columns=['hora'])
         # Renombrar la columna 'fecha' para mayor claridad
         resultado.rename(columns={'contador': 'hora'}, inplace=True)
+        resultado['valor'] = resultado['valor'].round(6)
 
         return resultado
 
@@ -54,11 +57,11 @@ class MedicionesServicio:
         df_combined = pd.DataFrame()
         for medidor in lista_medidores:
             clave_de_medicion = medidor + tipo_medidion
-            if timezone.value == TIMEZONE.ESTADO_DE_CUENTA.value:
+            if timezone.value == TIMEZONE.CC.value:
                 df_combined = self._obtener_medicio_por_timezone_cc(df_combined, medidor,fecha_inicio_dt,fecha_fin_dt,clave_de_medicion, tipo)
             
-            if timezone.value == TIMEZONE.CENACE.value:
-                df_combined = self._obtener_medicio_por_timezone_cenace(df_combined, medidor,fecha_inicio_dt,fecha_fin_dt,clave_de_medicion, tipo)
+            if timezone.value == TIMEZONE.ESTADO_DE_CUENTA.value:
+                df_combined = self._obtener_medicio_por_timezone_estado_cuenta(df_combined, medidor,fecha_inicio_dt,fecha_fin_dt,clave_de_medicion, tipo)
 
         return df_combined
     
@@ -76,7 +79,7 @@ class MedicionesServicio:
         return df_combined
         
     
-    def _obtener_medicio_por_timezone_cenace(self,df_combined, medidor,fecha_inicio_dt,fecha_fin_dt,clave_de_medicion, tipo):
+    def _obtener_medicio_por_timezone_estado_cuenta(self,df_combined, medidor,fecha_inicio_dt,fecha_fin_dt,clave_de_medicion, tipo):
         timezone_id = self.repo.obtener_timezone_id(medidor)
         un_dia = timedelta(days=1)
         cinco_minutos = timedelta(minutes=5)
