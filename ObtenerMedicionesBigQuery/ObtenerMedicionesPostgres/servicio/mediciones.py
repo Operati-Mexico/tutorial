@@ -14,7 +14,6 @@ class MedicionesServicio:
         
     def _convertir_minutal_horario(self,resultado:pd.DataFrame):
         # Convertir la columna a formato datetime
-        print(resultado)
         resultado['fecha'] = pd.to_datetime(resultado['fecha'])
         # Restar 5 minutos a la columna de fecha y hora
         resultado['fecha_restada'] = resultado['fecha'] - pd.Timedelta(minutes=5)

@@ -14,10 +14,10 @@ class TIPO_MEDICION(Enum):
     KVAR = "KVAR"
 
 class PARAMETROS_CONEXION (Enum):
-    HOST = "35.239.245.216"
+    HOST = ""
     DATAB_BASE = "ACCIONA_G094"
-    USER = "postgresroot"
-    PASSWORD = "xOLrRmjwPI#*.D2T8zKx0K6n"
+    USER = ""
+    PASSWORD = ""
 
 class PARTICIPANTE (Enum):
     ACCIONA_G094 = "ACCIONA_G094"
