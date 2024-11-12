@@ -8,8 +8,8 @@ from google.cloud import bigquery
 
 class ParticipanteRepositorio():
     
-    def __init__(self) -> None:
-        self.bqclient = bigquery.Client.from_service_account_json(PARAMETROS_CONEXION.PATH_TO_SERVICE_ACCOUNT_KEY_FILE)   
+    def __init__(self) -> None:                            
+        self.bqclient = bigquery.Client.from_service_account_json(PARAMETROS_CONEXION.PATH_TO_SERVICE_ACCOUNT_KEY_FILE.value)   
         self.parametros_conexion = {            
             "dataset_id": PARAMETROS_CONEXION.DATASET_ID.value,
             "database": PARAMETROS_CONEXION.DATAB_BASE.value,
