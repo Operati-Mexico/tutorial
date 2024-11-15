@@ -3,7 +3,7 @@ from servicio.mediciones import MedicionesServicio
 from util.constantes import TIPO_MEDICION,PARTICIPANTE,MODALIDAD,TIMEZONE
 
 
-fecha_inicio_dt = datetime(2024, 6, 1)
+fecha_inicio_dt = datetime(2024, 6, 30)
 fecha_fin_dt = datetime(2024, 6, 30)
 participante = PARTICIPANTE.ACCIONA_C035
 lista_mdidores = ["580921054323X"]
