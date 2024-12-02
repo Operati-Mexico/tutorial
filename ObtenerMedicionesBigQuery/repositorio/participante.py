@@ -33,7 +33,7 @@ class ParticipanteRepositorio():
             # Configurar los parámetros de la consulta
             job_config = bigquery.QueryJobConfig(
                 query_parameters=[
-                    bigquery.ScalarQueryParameter("ClavedeMedidor", "STRING", clave_de_medidor)
+                    bigquery.ScalarQueryParameter("clave_de_medidor", "STRING", clave_de_medidor)
                 ]
             )
 
@@ -42,7 +42,7 @@ class ParticipanteRepositorio():
 
             # Obtener el valor del resultado
             for fila in resultado:
-                return fila["timezone_id"]
+                return fila["TimezoneID"]
 
             # Si no se encuentran resultados, devolver None
             print("No se encontraron resultados para la ClavedeMedidor proporcionada.")
