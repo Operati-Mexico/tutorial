@@ -15,8 +15,8 @@ resultado = serv.obtener_mediciones_por_medidores(participante,tipo_medicion,lis
 resultado.to_csv("./resultado.csv")
 
 
-#resultado = serv.obtener_mediciones_todos_medidores(participante,tipo_medicion,fecha_inicio_dt,fecha_fin_dt,modalidad,timezone)
-#resultado.to_csv("./resultado_todos.csv")
+resultado = serv.obtener_mediciones_todos_medidores(participante,tipo_medicion,fecha_inicio_dt,fecha_fin_dt,modalidad,timezone)
+resultado.to_csv("./resultado_todos.csv")
 
 
 
