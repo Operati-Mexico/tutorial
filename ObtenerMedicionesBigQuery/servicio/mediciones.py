@@ -1,27 +1,15 @@
 from decimal import Decimal, getcontext
-from util.utl_fechas import convertir_fecha, obtener_rango_fechas
-from datetime import timedelta
+from util.utl_fechas import convertir_fecha, obtener_rango_fechas, calcular_horas_del_dia
+from datetime import datetime, timedelta
 import pandas as pd
 from util.constantes import TIPO_MEDICION,PARTICIPANTE,MODALIDAD,TIMEZONE
+import pytz
 
 from repositorio.participante import ParticipanteRepositorio
 import pandas as pd
 
-def get_custom_hour(dt):
-        hour = dt.hour
-        if hour == 0:
-            return 1
-        elif hour == 12:
-            return 13
-        elif hour > 12:
-            return hour + 1
-        else:
-            return hour + 1
-
 class MedicionesServicio:
 
-    
-        
     def __init__(self) -> None:
         self.repo = ParticipanteRepositorio()
         
@@ -35,19 +23,18 @@ class MedicionesServicio:
         # Redondear hacia abajo a la hora más cercana
         resultado['fecha_y_hora_redondeada'] = resultado['fecha_restada'].dt.floor('h')
         # Extraer solo la hora
-        #resultado['hora'] = resultado['fecha_y_hora_redondeada'].dt.hour        
-        resultado['hora'] = resultado['fecha_restada'].apply(get_custom_hour)
-
+        resultado['hora'] = resultado['fecha_y_hora_redondeada'].dt.hour        
         # Extraer solo la fecha
         resultado['fecha_solo'] = resultado['fecha_y_hora_redondeada'].dt.date
         # Agrupar por la columna modificada
-        # Agrupar por 'clave_de_medidor', 'fecha', y 'tipo' y sumar los valores
-        df_grouped = resultado.groupby(['clave_de_medicion','clave_de_medidor','fecha_solo', 'hora','tipo'])['valor'].sum().reset_index()
-
+        
+        df_grouped = resultado.groupby(['clave_de_medicion','clave_de_medidor','fecha_solo', 'hora'])['valor'].sum().reset_index()
+        
         # Renombrar la columna 'fecha' para mayor claridad
         df_grouped.rename(columns={'fecha_solo': 'fecha'}, inplace=True)
         return df_grouped
     
+   
     def _convertir_minutal_horario_sumada(self,resultado:pd.DataFrame):
         resultado['hora'] = resultado['hora'] + 1
         resultado['valor'] = resultado['valor'].round(6)
@@ -88,6 +75,7 @@ class MedicionesServicio:
         if timezone_id:
             fecha_inicio = convertir_fecha(fecha_inicio_dt, timezone_id)
             fecha_fin = convertir_fecha(fecha_fin_dt, timezone_id)
+           
             if fecha_inicio and fecha_fin:
                 resultado = self.repo.obtener_mediciones(clave_de_medicion, fecha_inicio, fecha_fin)                            
                 if(tipo == MODALIDAD.HORARIO):
@@ -104,7 +92,7 @@ class MedicionesServicio:
         if timezone_id:            
             rango =  obtener_rango_fechas(fecha_inicio_dt,fecha_fin_dt)
             for fecha in rango :
-                print(fecha)
+                
                 fecha2 = fecha+un_dia -cinco_minutos
                 fecha_inicio = convertir_fecha(fecha, timezone_id)
                 fecha_fin = convertir_fecha(fecha2, timezone_id)
