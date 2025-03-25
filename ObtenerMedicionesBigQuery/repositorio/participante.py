@@ -25,9 +25,9 @@ class ParticipanteRepositorio():
 
             # Definir la consulta SQL con parámetros
             consulta_sql = """
-            SELECT TimezoneID
-            FROM `"""+self.parametros_conexion["dataset_id"]+"""."""+self.parametros_conexion["database"] +""".ClavesDeMedidor`
-            WHERE ClavedeMedidor = @clave_de_medidor
+            SELECT rel.TimezoneID
+            FROM `"""+self.parametros_conexion["dataset_id"]+"""`."""+self.parametros_conexion["database"] +""".ClavesDeMedidor rel            
+            WHERE rel.ClavedeMedidor = @clave_de_medidor     
             """
 
             # Configurar los parámetros de la consulta
@@ -42,6 +42,7 @@ class ParticipanteRepositorio():
 
             # Obtener el valor del resultado
             for fila in resultado:
+                x = fila
                 return fila["TimezoneID"]
 
             # Si no se encuentran resultados, devolver None
@@ -97,17 +98,17 @@ class ParticipanteRepositorio():
                 Tipo as tipo, Fecha as fecha, Valor as valor
             FROM `"""+self.parametros_conexion["dataset_id"]+"""."""+self.parametros_conexion["database"] +""".Mediciones`
             WHERE ClavedeMedicion = @clave_de_medicion
-            AND Fecha >= @fecha_inicio
-            AND Fecha <= @fecha_fin
+            AND FechaTimeStamp >= @fecha_inicio
+            AND FechaTimeStamp <= @fecha_fin
             ORDER BY id ASC
             """
 
             # Configurar los parámetros de la consulta
             job_config = bigquery.QueryJobConfig(
                 query_parameters=[
-                    bigquery.ScalarQueryParameter("clave_de_medicion", "STRING", clave_de_medicion),
-                    bigquery.ScalarQueryParameter("fecha_inicio", "STRING", fecha_inicio),
-                    bigquery.ScalarQueryParameter("fecha_fin", "STRING", fecha_fin),
+                    bigquery.ScalarQueryParameter("clave_de_medicion", "STRING", clave_de_medicion),                    
+                    bigquery.ScalarQueryParameter("fecha_inicio", "TIMESTAMP", fecha_inicio),
+                    bigquery.ScalarQueryParameter("fecha_fin", "TIMESTAMP", fecha_fin),
                 ]
             )
 
@@ -122,67 +123,51 @@ class ParticipanteRepositorio():
         except Exception as error:
             print("Error al conectar a BigQuery:", error)
             return pd.DataFrame()  # Retorna un DataFrame vacío en caso de error
-    def obtener_lista_medidores(self, clave_de_medidor=None) -> list:
+    
+    def obtener_lista_medidores(self, fecha_inicio_dt, fecha_fin_dt, clave_de_medidor=None) -> list:
         try:
             # Crear el cliente de BigQuery
             cliente_bq = self.bqclient 
 
             # Definir la consulta SQL con parámetros
             if clave_de_medidor:
+                # Definir la consulta SQL con parámetros
                 consulta_sql = """
-                SELECT ClavedeMedidor
-                FROM `"""+self.parametros_conexion["dataset_id"]+"""."""+self.parametros_conexion["database"] +""".ClavesDeMedidor`
-                WHERE ClavedeMedidor = @clave_de_medidor
+                SELECT rel.ClavedeMedidor
+                FROM `"""+self.parametros_conexion["dataset_id"]+"""`."""+self.parametros_conexion["database"] +""".ClavesDeMedidor rel
+                inner join 
+                `"""+self.parametros_conexion["dataset_id"]+"""`."""+self.parametros_conexion["database"] +""".ActivosFisicos af 
+                on af.Id  = rel.CentrodeCargaRelacionado 
+                WHERE rel.ClavedeMedidor = @clave_de_medidor      
+                AND af.Fechadeiniciodesuministro <= @fecha_fin     
                 """
-                # Configurar el parámetro de la consulta
+
+                # Configurar los parámetros de la consulta
                 job_config = bigquery.QueryJobConfig(
                     query_parameters=[
-                        bigquery.ScalarQueryParameter("ClavedeMedidor", "STRING", clave_de_medidor)
+                        bigquery.ScalarQueryParameter("clave_de_medidor", "STRING", clave_de_medidor)                        
                     ]
                 )
+
             else:
+
+                # Definir la consulta SQL con parámetros
                 consulta_sql = """
-                SELECT ClavedeMedidor
-                FROM `"""+self.parametros_conexion["dataset_id"]+"""."""+self.parametros_conexion["database"] +""".ClavesDeMedidor`
+                SELECT rel.ClavedeMedidor
+                FROM `"""+self.parametros_conexion["dataset_id"]+"""`."""+self.parametros_conexion["database"] +""".ClavesDeMedidor rel
+                inner join 
+                `"""+self.parametros_conexion["dataset_id"]+"""`."""+self.parametros_conexion["database"] +""".ActivosFisicos af 
+                on af.Id  = rel.CentrodeCargaRelacionado 
+                WHERE af.Fechadeiniciodesuministro <= @fecha_fin     
                 """
-                job_config = None  # No hay parámetros si no se proporciona una clave_de_medidor
 
-            # Ejecutar la consulta
-            resultado = cliente_bq.query(consulta_sql, job_config=job_config).result()
-
-            # Extraer los resultados como una lista de claves de medidor
-            lista_medidores = [fila["ClavedeMedidor"] for fila in resultado]
-
-            return lista_medidores
-
-        except Exception as error:
-            print("Error al conectar a BigQuery:", error)
-            return None
-
-    def obtener_lista_medidores(self, clave_de_medidor=None) -> list:
-        try:
-            # Crear el cliente de BigQuery
-            cliente_bq = self.bqclient 
-
-            # Definir la consulta SQL con parámetros
-            if clave_de_medidor:
-                consulta_sql = """
-                SELECT ClavedeMedidor
-                FROM `"""+self.parametros_conexion["dataset_id"]+"""."""+self.parametros_conexion["database"] +""".ClavesDeMedidor`
-                WHERE ClavedeMedidor = @clave_de_medidor
-                """
-                # Configurar el parámetro de la consulta
+                # Configurar los parámetros de la consulta
                 job_config = bigquery.QueryJobConfig(
                     query_parameters=[
-                        bigquery.ScalarQueryParameter("ClavedeMedidor", "STRING", clave_de_medidor)
+                        bigquery.ScalarQueryParameter("fecha_ini", "DATE", fecha_inicio_dt.strftime("%Y-%m-%d") ),  # Usar tipo DATE
+                        bigquery.ScalarQueryParameter("fecha_fin", "DATE", fecha_fin_dt.strftime("%Y-%m-%d") ),  # Usar tipo DATE
                     ]
                 )
-            else:
-                consulta_sql = """
-                SELECT ClavedeMedidor
-                FROM `"""+self.parametros_conexion["dataset_id"]+"""."""+self.parametros_conexion["database"] +""".ClavesDeMedidor`
-                """
-                job_config = None  # No hay parámetros si no se proporciona una clave_de_medidor
 
             # Ejecutar la consulta
             resultado = cliente_bq.query(consulta_sql, job_config=job_config).result()

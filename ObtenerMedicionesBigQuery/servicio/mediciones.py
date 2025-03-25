@@ -7,21 +7,37 @@ from util.constantes import TIPO_MEDICION,PARTICIPANTE,MODALIDAD,TIMEZONE
 from repositorio.participante import ParticipanteRepositorio
 import pandas as pd
 
+def get_custom_hour(dt):
+        hour = dt.hour
+        if hour == 0:
+            return 1
+        elif hour == 12:
+            return 13
+        elif hour > 12:
+            return hour + 1
+        else:
+            return hour + 1
+
 class MedicionesServicio:
 
+    
+        
     def __init__(self) -> None:
         self.repo = ParticipanteRepositorio()
         
     def _convertir_minutal_horario(self,resultado:pd.DataFrame):
-        print(resultado)
         # Convertir la columna a formato datetime
-        resultado['fecha'] = pd.to_datetime(resultado['fecha'])
+        resultado['datetime_str_sliced'] = resultado['fecha'].str[:19]
+        resultado['fecha'] = pd.to_datetime(resultado['datetime_str_sliced'])
+        
         # Restar 5 minutos a la columna de fecha y hora
         resultado['fecha_restada'] = resultado['fecha'] - pd.Timedelta(minutes=5)
         # Redondear hacia abajo a la hora más cercana
         resultado['fecha_y_hora_redondeada'] = resultado['fecha_restada'].dt.floor('h')
         # Extraer solo la hora
-        resultado['hora'] = resultado['fecha_y_hora_redondeada'].dt.hour        
+        #resultado['hora'] = resultado['fecha_y_hora_redondeada'].dt.hour        
+        resultado['hora'] = resultado['fecha_restada'].apply(get_custom_hour)
+
         # Extraer solo la fecha
         resultado['fecha_solo'] = resultado['fecha_y_hora_redondeada'].dt.date
         # Agrupar por la columna modificada
@@ -57,6 +73,7 @@ class MedicionesServicio:
 
         df_combined = pd.DataFrame()
         for medidor in lista_medidores:
+            print(medidor)
             clave_de_medicion = medidor + tipo_medidion
             if timezone.value == TIMEZONE.CC.value:
                 df_combined = self._obtener_medicio_por_timezone_cc(df_combined, medidor,fecha_inicio_dt,fecha_fin_dt,clave_de_medicion, tipo)
@@ -67,7 +84,7 @@ class MedicionesServicio:
         return df_combined
     
     def _obtener_medicio_por_timezone_cc(self,df_combined, medidor,fecha_inicio_dt,fecha_fin_dt,clave_de_medicion, tipo):
-        timezone_id = self.repo.obtener_timezone_id_cc(medidor)
+        timezone_id = self.repo.obtener_timezone_id(medidor)
         if timezone_id:
             fecha_inicio = convertir_fecha(fecha_inicio_dt, timezone_id)
             fecha_fin = convertir_fecha(fecha_fin_dt, timezone_id)
@@ -81,12 +98,13 @@ class MedicionesServicio:
         
     
     def _obtener_medicio_por_timezone_estado_cuenta(self,df_combined, medidor,fecha_inicio_dt,fecha_fin_dt,clave_de_medicion, tipo):
-        timezone_id = self.repo.obtener_timezone_id(medidor)
+        timezone_id = self.repo.obtener_timezone_id(medidor)        
         un_dia = timedelta(days=1)
         cinco_minutos = timedelta(minutes=5)
         if timezone_id:            
             rango =  obtener_rango_fechas(fecha_inicio_dt,fecha_fin_dt)
             for fecha in rango :
+                print(fecha)
                 fecha2 = fecha+un_dia -cinco_minutos
                 fecha_inicio = convertir_fecha(fecha, timezone_id)
                 fecha_fin = convertir_fecha(fecha2, timezone_id)
@@ -95,13 +113,12 @@ class MedicionesServicio:
                 if(tipo == MODALIDAD.HORARIO):
                     resultado = self._convertir_minutal_horario(resultado)                         
                     resultado = self._convertir_minutal_horario_conteo(resultado)                         
-                df_combined = pd.concat([df_combined, resultado], ignore_index=True)
-
+                df_combined = pd.concat([df_combined, resultado], ignore_index=True)            
         return df_combined
 
     def obtener_mediciones_todos_medidores(self, participante:PARTICIPANTE, tipo_medicion:TIPO_MEDICION, fecha_inicio_dt, fecha_fin_dt,modalidad:MODALIDAD,timezone:TIMEZONE):
         self.repo.asignar_participante(participante.value)
-        lista_medidores = self.repo.obtener_lista_medidores()
+        lista_medidores = self.repo.obtener_lista_medidores(fecha_inicio_dt, fecha_fin_dt)
         return self._obtener_mediciones_para_medidores(tipo_medicion.value, lista_medidores, fecha_inicio_dt, fecha_fin_dt,modalidad,timezone)
 
     def obtener_mediciones_por_medidores(self, participante:PARTICIPANTE, tipo_medidion:TIPO_MEDICION, lista_medidores, fecha_inicio_dt, fecha_fin_dt,modalidad:MODALIDAD,timezone:TIMEZONE):        

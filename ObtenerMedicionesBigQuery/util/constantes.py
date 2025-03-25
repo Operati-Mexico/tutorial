@@ -16,7 +16,7 @@ class TIPO_MEDICION(Enum):
 class PARAMETROS_CONEXION (Enum):    
     DATAB_BASE = "ACCIONA_G094"
     DATASET_ID = "acciona-info-privada"
-    PATH_TO_SERVICE_ACCOUNT_KEY_FILE = "" #Modificar la ruta de los accesos
+    PATH_TO_SERVICE_ACCOUNT_KEY_FILE = "C:\\Proyectos\\Operati\\cuentas_servicios\\account-app-01.json" #Modificar la ruta de los accesos
 
 class PARTICIPANTE (Enum):
     ACCIONA_G094 = "ACCIONA_G094"

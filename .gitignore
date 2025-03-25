@@ -310,3 +310,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 tutorialBigquery/credeciales/info-publica-mem-key.json
+tutorialBigquery/Historico_ASV.csv
