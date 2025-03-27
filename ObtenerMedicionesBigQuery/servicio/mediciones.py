@@ -59,7 +59,7 @@ class MedicionesServicio:
         fecha_fin_dt = fecha_fin_dt + un_dia
 
         df_combined = pd.DataFrame()
-        for medidor in lista_medidores:
+        for medidor in lista_medidores:            
             print(medidor)
             clave_de_medicion = medidor + tipo_medidion
             if timezone.value == TIMEZONE.CC.value:
@@ -91,8 +91,7 @@ class MedicionesServicio:
         cinco_minutos = timedelta(minutes=5)
         if timezone_id:            
             rango =  obtener_rango_fechas(fecha_inicio_dt,fecha_fin_dt)
-            for fecha in rango :
-                
+            for fecha in rango :                
                 fecha2 = fecha+un_dia -cinco_minutos
                 fecha_inicio = convertir_fecha(fecha, timezone_id)
                 fecha_fin = convertir_fecha(fecha2, timezone_id)
@@ -100,8 +99,10 @@ class MedicionesServicio:
                 resultado = self.repo.obtener_mediciones(clave_de_medicion, fecha_inicio, fecha_fin)   
                 if(tipo == MODALIDAD.HORARIO):
                     resultado = self._convertir_minutal_horario(resultado)                         
-                    resultado = self._convertir_minutal_horario_conteo(resultado)                         
-                df_combined = pd.concat([df_combined, resultado], ignore_index=True)            
+                    resultado = self._convertir_minutal_horario_conteo(resultado)                               
+                
+                if len(resultado) != 0:                                   
+                    df_combined = pd.concat([df_combined, resultado], ignore_index=True)            
         return df_combined
 
     def obtener_mediciones_todos_medidores(self, participante:PARTICIPANTE, tipo_medicion:TIPO_MEDICION, fecha_inicio_dt, fecha_fin_dt,modalidad:MODALIDAD,timezone:TIMEZONE):
