@@ -99,12 +99,14 @@ class OperatiAPIParticipanteClient:
         return self._get_json_request("/ecds/GetListadoFULs/", params={"fechaInicial": fecha_inicial, "fechaFinal": fecha_final, "subcuentas": subcuentas})
 
     def obtener_archivo_ecd_por_cuenta_y_fecha(self, cuenta_de_orden: str, fecha: str, formato: str, save_path: str):
-        return self._download_file_request("/file/ecds/", save_path, params={"cuentadeorden": cuenta_de_orden, "fecha": fecha, "formato": formato})
+        return self._download_file_request("/file/ecd/", save_path, params={"cuentadeorden": cuenta_de_orden, "fecha": fecha, "formato": formato})
 
     def obtener_archivo_ecd_por_fecha(self, fecha: str, save_path: str):
+        ''' Retorna zip '''
         return self._download_file_request("/file/ecds/", save_path, params={"fecha": fecha})
-        
+    
     def obtener_archivo_anexos_ecd(self, cuenta_orden: str, fecha_ec_ini: str, fecha_ec_fin: str, save_path: str):
+        ''' Retorna xlsx '''
         params = {"cuentaOrden": cuenta_orden, "fechaECIni": fecha_ec_ini, "fechaECFin": fecha_ec_fin}
         return self._download_file_request("/file/ecds/parseo/anexos/excel", save_path, params=params)
 
@@ -115,6 +117,7 @@ class OperatiAPIParticipanteClient:
         return self._get_json_request("/mediciones/", params=params)
 
     def obtener_archivo_mediciones_fiscales(self, id_medidor: str, parametro: str, fecha: str, modalidad: str, formato: str, save_path: str):
+        '''retorna csv xlsx'''
         params = {"idmedidor": id_medidor, "parametro": parametro, "fecha": fecha, "modalidad": modalidad, "formato": formato}
         return self._download_file_request("/file/medicion", save_path, params=params)
 
@@ -144,30 +147,5 @@ class OperatiAPIParticipanteClient:
     
     def consultar_rea(self, fecha_inicial: str, fecha_final: str):
         # Nota: Este endpoint en Postman usa la misma URL que la consulta de tickets.
-        return self._get_json_request("/Escritorio247/ticket/", params={"fechaInicial": fecha_inicial, "fechaFinal": fecha_final})
+        return self._get_json_request("/ReaYGarantias/rea/", params={"fechaIni": fecha_inicial, "fechafin": fecha_final})
 
-    # --- Comunicación ---
-
-    def consultar_estado_conexion_medidores(self):
-        return self._get_json_request("/Comunicacion/EstadoConexionMedidores")
-
-    def consultar_historico_conexion_medidores(self):
-        return self._get_json_request("/Comunicacion/HistoricoConexionMedidores/")
-        
-    def consultar_historial_conexion_medidores_bytes(self, fecha_inicio: str, fecha_fin: str):
-        return self._get_json_request("/Comunicacion/HistoricoConexionMedidoresByDates", params={"fechaInicio": fecha_inicio, "fechaFin": fecha_fin})
-
-    def obtener_archivo_mediciones_comunicacion(self, accion_solicitada: str, medidores: str, parametros: str, fecha_inicial: str, fecha_final: str, formato: str, save_path: str):
-        params = {"accionSolicitada": accion_solicitada, "medidores": medidores, "parametros": parametros, "fechaInicial": fecha_inicial, "fechaFinal": fecha_final, "formato": formato}
-        return self._download_file_request("/file/medicionescomunicacion/", save_path, params=params)
-        
-    # --- Área Certificada y Segura ---
-
-    def consultar_energia_asignada_cc(self, fecha_ini: str, fecha_fin: str):
-        return self._get_json_request("/participante/energia-corto-plazo/energia-asignada/cc", params={"fechaIni": fecha_ini, "fechaFin": fecha_fin})
-
-    def consultar_energia_asignada_uce(self, fecha_ini: str, fecha_fin: str, proceso: str):
-        return self._get_json_request("/participante/energia-corto-plazo/energia-asignada/uce", params={"fechaIni": fecha_ini, "fechaFin": fecha_fin, "proceso": proceso})
-        
-    def consultar_energia_asignada_imp_exp(self, fecha_ini: str, fecha_fin: str, proceso: str):
-        return self._get_json_request("/participante/energia-corto-plazo/energia-asignada/imp-exp", params={"fechaIni": fecha_ini, "fechaFin": fecha_fin, "proceso": proceso})

@@ -3,10 +3,7 @@ from api_client_info_mercado import OperatiAPIInfoMercadoClient
 # Asegúrate de haber configurado las variables de entorno antes de ejecutar
 try:
     # 1. Crear una instancia del cliente (la autenticación ocurre aquí)
-    cliente = OperatiAPIInfoMercadoClient(
-    username="jesus.gutierrez", 
-    password="08090385e*"
-    )
+    cliente = OperatiAPIInfoMercadoClient(username="tu_usuario", password="tu_contraseña")
 
     # 2. Ejemplo 1: Consultar Precios Marginales Locales (PML)
     print("\n--- Consultando PML ---")
