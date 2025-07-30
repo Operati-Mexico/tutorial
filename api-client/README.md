@@ -1,6 +1,6 @@
-# Cliente Python para la API del Repositorio de Información Pública de Mercado
+# Cliente Python para la API del Repositorio de Información Pública de Mercado y Participante
 
-Este proyecto proporciona un cliente de Python (`OperatiAPIClient`) para interactuar de manera sencilla con la API del **Repositorio de Información Pública de Mercado de Operati**.
+Este proyecto proporciona un cliente de Python para interactuar de manera sencilla con la API del **Repositorio de Información de Mercado y Participante de Operati**.
 
 El cliente gestiona la autenticación de forma automática y ofrece métodos claros y directos para cada uno de los *endpoints* disponibles en la API.
 
@@ -47,7 +47,7 @@ Para una configuración permanente, consulta la documentación de tu sistema ope
 
 Una vez configurado, usar el cliente es muy sencillo.
 
-1.  **Importa** la clase `OperatiAPIClient`.
+1.  **Importa** la clase `OperatiAPI##`.
 2.  **Crea una instancia** de la clase. La autenticación se realizará automáticamente.
 3.  **Llama a los métodos** que necesites para obtener los datos.
 
